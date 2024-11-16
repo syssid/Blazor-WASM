@@ -1,0 +1,45 @@
+﻿@page "/create"
+@inject HttpClient Http
+@inject NavigationManager nav
+<h3>CreateEmployee</h3>
+
+<EditForm Model="emps" OnValidSubmit="SaveEmployee">
+	<div class="mb-3">
+		<label class="form-label">First Name</label>
+		<InputText class="form-control" @bind-Value=emps.FirstName></InputText>
+	</div>
+	<div class="mb-3">
+		<label class="form-label">Last Name</label>
+		<InputText class="form-control" @bind-Value=emps.LastName></InputText>
+	</div>
+	<div class="mb-3">
+		<label class="form-label">Phone</label>
+		<InputText class="form-control" @bind-Value=emps.Phone></InputText>
+	</div>
+	<div class="mb-3">
+		<label class="form-label">Email</label>
+		<InputText class="form-control" @bind-Value=emps.Email></InputText>
+	</div>
+	<div class="mb-3">
+		<label class="form-label">Address</label>
+		<InputText class="form-control" @bind-Value=emps.Address></InputText>
+	</div>
+	<button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+@code {
+	Employee emps = new();
+
+	private async void SaveEmployee()
+	{
+
+		var response = await Http.PostAsJsonAsync("https://localhost:7114/api/Employees", emps);
+		if (response.IsSuccessStatusCode)
+		{
+			nav.NavigateTo("/emps");
+		}
+		else
+		{
+		}
+	}
+}

@@ -1,0 +1,65 @@
+﻿@page "/update/{id:int}"
+@inject HttpClient Http
+@inject NavigationManager Nav
+<h3>Edit Employee</h3>
+@if (employee == null)
+{
+	<p>Loading...</p>
+}
+else
+{
+	<EditForm Model="employee" OnValidSubmit="UpdateEmployee">
+		<div class="mb-3">
+			<label class="form-label">First Name</label>
+			<InputText class="form-control" @bind-Value=employee.FirstName></InputText>
+		</div>
+		<div class="mb-3">
+			<label class="form-label">Last Name</label>
+			<InputText class="form-control" @bind-Value=employee.LastName></InputText>
+		</div>
+		<div class="mb-3">
+			<label class="form-label">Phone</label>
+			<InputText class="form-control" @bind-Value=employee.Phone></InputText>
+		</div>
+		<div class="mb-3">
+			<label class="form-label">Email</label>
+			<InputText class="form-control" @bind-Value=employee.Email></InputText>
+		</div>
+		<div class="mb-3">
+			<label class="form-label">Address</label>
+			<InputText class="form-control" @bind-Value=employee.Address></InputText>
+		</div>
+		<button type="submit" class="btn btn-primary">Submit</button>
+	</EditForm>
+}
+@code {
+	[Parameter]
+	public int id { get; set; }
+	private Employee employee;
+
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			employee = await Http.GetFromJsonAsync<Employee>($"https://localhost:7114/api/Employees/{id}");
+
+		}
+		catch (Exception ex)
+		{
+
+			throw ex;
+		}
+	}
+	private async Task UpdateEmployee()
+	{
+		var response = await Http.PutAsJsonAsync($"https://localhost:7114/api/Employees/{id}", employee);
+
+		if (response.IsSuccessStatusCode)
+		{
+			Nav.NavigateTo("/emps");
+		}
+		else
+		{
+		}
+	}
+}

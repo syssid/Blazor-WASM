@@ -1,0 +1,78 @@
+﻿@page "/"
+@inject HttpClient Http
+@inject NavigationManager Nav
+<h3>Employees</h3>
+@if (emps == null)
+{
+	<p><em>Loading...</em></p>
+}
+else
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>FirstName</th>
+				<th>LastName</th>
+				<th>Phone</th>
+				<th>Email</th>
+				<th>Address</th>
+				<th>CreatedOn</th>
+				<th>Remove</th>
+				<th>Edit</th>
+
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in emps)
+			{
+				<tr>
+					<td>@item.ID</td>
+					<td>@item.FirstName</td>
+					<td>@item.LastName</td>
+					<td>@item.Phone</td>
+					<td>@item.Email</td>
+					<td>@item.Address</td>
+					<td>@item.CreatedOn.ToShortDateString()</td>
+					<td>
+						<button type="submit" class="btn btn-danger" onclick="@(()=> DeleteRecord(item.ID) )">Delete</button>
+					</td>
+					<td>
+						<button type="button" class="btn btn-primary" onclick="@(() => Nav.NavigateTo($"/update/{item.ID}"))">Edit</button>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+@code {
+	private IEnumerable<Employee> emps { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			emps = await Http.GetFromJsonAsync<IEnumerable<Employee>>("https://localhost:7114/api/Employees");
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex.Message);
+		}
+	}
+
+	private async Task DeleteRecord(int id)
+	{
+		try
+		{
+			var response = await Http.DeleteAsync("https://localhost:7114/api/Employees/" + id);
+			if (response.IsSuccessStatusCode)
+			{
+
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex.Message);
+		}
+	}
+}
